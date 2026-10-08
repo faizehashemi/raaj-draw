@@ -49,23 +49,33 @@ jobs:
         shell: pwsh
         run: python raaj/rebrand.py --translations
 
-      - uses: actions/cache@v4
+      # Compiler cache, also kept when the build fails so a retry continues where it stopped.
+      - uses: actions/cache/restore@v4
         with:
           path: ccache
-          key: ccache-windows-${{ github.sha }}
+          key: ccache-windows-${{ github.run_id }}
           restore-keys: ccache-windows-
 
       - name: Configure
         shell: pwsh
         run: |
           & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c `
-            "cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+            "set -o pipefail; cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache 2>&1 | tee configure.log"
+          if ($LASTEXITCODE -ne 0) { python raaj/ci-report.py configure.log; exit 1 }
 
       - name: Build installer (.exe) and portable archive (.7z)
         shell: pwsh
         run: |
-          & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c "ninja -C build dist-win-exe dist-win-7z"
+          & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c `
+            "set -o pipefail; ninja -C build dist-win-exe dist-win-7z 2>&1 | tee build.log"
+          if ($LASTEXITCODE -ne 0) { python raaj/ci-report.py build.log; exit 1 }
           Get-ChildItem build -Filter "raajdraw*" | Format-Table Name, Length
+
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ccache
+          key: ccache-windows-${{ github.run_id }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -83,6 +93,12 @@ jobs:
       # Inkscape's CI image for AppImages (Ubuntu 20.04, so the AppImage runs on older systems)
       image: registry.gitlab.com/inkscape/inkscape-ci-docker/ubuntu-2004
       options: --privileged
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/ccache
+      CCACHE_MAXSIZE: 1G
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Install git and libcurl
         run: |
@@ -93,12 +109,28 @@ jobs:
         with:
           submodules: recursive
 
+      - uses: actions/cache/restore@v4
+        with:
+          path: ccache
+          key: ccache-linux-${{ github.run_id }}
+          restore-keys: ccache-linux-
+
       - name: Build AppImage
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           python3 raaj/rebrand.py --translations
-          bash -ex packaging/appimage/generate.sh
-          ls -l Raaj_Draw*.AppImage*
+          set -o pipefail
+          if ! bash -ex packaging/appimage/generate.sh 2>&1 | tee build.log; then
+            python3 raaj/ci-report.py build.log
+            exit 1
+          fi
+          ls -l *.AppImage* || { python3 raaj/ci-report.py build.log; exit 1; }
+
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ccache
+          key: ccache-linux-${{ github.run_id }}
 
       - uses: actions/upload-artifact@v4
         with:
