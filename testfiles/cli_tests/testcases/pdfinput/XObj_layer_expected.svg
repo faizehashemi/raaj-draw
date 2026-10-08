@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="816"
+   height="1056"
+   viewBox="0 0 816 1056"
+   sodipodi:docname="XObj_layer.pdf"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <path
+         d="M 100,100 H 200.00001 V 200.00001 H 100 Z"
+         id="path2" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4">
+      <path
+         d="m 300.00001,300.00001 h 100 v 100 h -100 z"
+         id="path4" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6">
+      <path
+         d="M 100,100 H 200.00001 V 200.00001 H 100 Z"
+         id="path6" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath8">
+      <path
+         d="m 300.00001,300.00001 h 100 v 100 h -100 z"
+         id="path8" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="816"
+       height="1056"
+       margin="0"
+       bleed="0" />
+    <inkscape:page
+       x="836"
+       y="0"
+       inkscape:label="2"
+       id="page5"
+       width="816"
+       height="1056" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:groupmode="layer"
+     inkscape:label="1" />
+  <g
+     id="Red Rectangles"
+     inkscape:groupmode="layer"
+     inkscape:label="Red Rectangles">
+    <g
+       id="g3">
+      <path
+         d="M 100,100 H 200 V 200 H 100 Z"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         transform="matrix(1.3333333,0,0,-1.3333333,0,1056)"
+         clip-path="url(#clipPath2)"
+         id="path3" />
+    </g>
+    <g
+       id="g7">
+      <path
+         d="M 100,100 H 200 V 200 H 100 Z"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         transform="matrix(1.3333333,0,0,-1.3333333,836,1056)"
+         clip-path="url(#clipPath6)"
+         id="path7" />
+    </g>
+  </g>
+  <g
+     id="Blue Rectangles"
+     inkscape:groupmode="layer"
+     inkscape:label="Blue Rectangles">
+    <g
+       id="g5">
+      <path
+         d="M 300,300 H 400 V 400 H 300 Z"
+         style="fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         transform="matrix(1.3333333,0,0,-1.3333333,0,1056)"
+         clip-path="url(#clipPath4)"
+         id="path5" />
+    </g>
+    <g
+       id="g9">
+      <path
+         d="M 300,300 H 400 V 400 H 300 Z"
+         style="fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         transform="matrix(1.3333333,0,0,-1.3333333,836,1056)"
+         clip-path="url(#clipPath8)"
+         id="path9" />
+    </g>
+  </g>
+  <g
+     id="g6"
+     inkscape:groupmode="layer"
+     inkscape:label="2" />
+</svg>

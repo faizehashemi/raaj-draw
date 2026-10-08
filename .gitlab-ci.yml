@@ -1,0 +1,504 @@
+# Dependencies are managed in the Dockerfile in the inkscape-ci-docker
+# Git repository. Change them there, wait a bit, and then we'll use
+# the new ones here in these builds.
+image: registry.gitlab.com/inkscape/inkscape-ci-docker/master
+
+
+# This file is structured in four parts:
+# I) definitions
+# II) build jobs
+# III) checks that are run on merge requests
+# IV) building inkscape.gitlab.io/inkscape (doc and scan)
+#
+
+
+#######################
+#                     #
+#     Definitions     #
+#                     #
+#######################
+
+# all jobs are safe to interrupt
+default:
+  interruptible: true
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+  timeout: 3h
+
+
+#speedup git on runners
+variables:
+  GIT_DEPTH: "50"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+#reusable templates
+.ccache_init: &ccache_init
+  before_script:
+    - mkdir -p ccache
+    - export CCACHE_BASEDIR=${PWD}
+    - export CCACHE_DIR=${PWD}/ccache
+
+.cmake: &cmake
+- mkdir -p build/conf
+- cd build
+- cmake .. -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=$PWD/install_dir/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+# basic workflow setup:
+# - run pipelines for all branches without an open MR
+# - run MR pipeline only as soon as an MR is opened
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
+.run_MR: &run_for_MR
+  if: '$CI_MERGE_REQUEST_ID'
+
+.run_no_MR: &do_not_run_for_MR
+  if: '$CI_MERGE_REQUEST_ID'
+  when: never
+
+.run_no_schedules: &do_not_run_for_schedules
+  if: '$CI_PIPELINE_SOURCE == "schedule"'
+  when: never
+
+.run_otherwise: &run_otherwise
+  when: on_success
+
+
+#######################
+#                     #
+#  Building inkscape  #
+#                     #
+#######################
+# Linux, Appimage, macOS, Windows.
+
+
+inkscape:linux:
+  stage: build
+  rules:
+    - *do_not_run_for_schedules
+    - *run_otherwise
+  cache:
+    key: "cache-linux"
+    paths:
+      - ccache/
+  <<: *ccache_init
+  script:
+    - *cmake
+    - make -j3 install
+    - make -j3 tests
+    #- cpack -G DEB
+    - rm -rf src _CPack_Packages # exclude from artifacts
+    - cd ..
+  artifacts:
+    expire_in: 1 year
+    paths:
+      - build/
+
+
+appimage:linux:
+  image: registry.gitlab.com/inkscape/inkscape-ci-docker/ubuntu-2004
+  # appimage creator script does not support recent OS (yet)
+  stage: build
+  rules:
+    - *do_not_run_for_schedules
+    - *run_otherwise
+  cache:
+    key: "cache-appimage"
+    paths:
+      - ccache/
+  <<: *ccache_init
+  script:
+    - bash -ex packaging/appimage/generate.sh
+  artifacts:
+    expire_in: 1 year
+    paths:
+      - Inkscape*.AppImage*
+
+
+inkscape:macos:
+  stage: build
+  parallel:
+    matrix:
+      - ARCHITECTURE: [ "arm64", "x86_64" ]
+  rules:
+    - *do_not_run_for_schedules
+    # Create macOS jobs only for the "inkscape" namespace as the runner is
+    # restricted to that group. ("dehesselle" namespace has its own runner)
+    - if: $CI_PROJECT_NAMESPACE != "inkscape" && $CI_PROJECT_NAMESPACE != "dehesselle"
+      when: never
+    - if: $ARCHITECTURE == "x86_64"
+      when: manual
+      allow_failure: true
+      variables:
+        MACOSX_DEPLOYMENT_TARGET: "10.13"
+    - if: $ARCHITECTURE == "arm64"
+      variables:
+        SDKROOT: /opt/sdks/MacOSX11.3.sdk
+  cache:
+    - key: ccache-$CI_JOB_NAME_SLUG-$CI_COMMIT_REF_SLUG
+      fallback_keys:
+        - ccache-$CI_JOB_NAME_SLUG-1-4-x
+      paths:
+        - ccache
+  tags:
+    - macos
+    - ${ARCHITECTURE}
+  variables:
+    CCACHE_DIR: $CI_PROJECT_DIR/ccache
+    CCACHE_MAXSIZE: "300Mi"
+    INK_BUILD: $CI_PIPELINE_IID
+    WRK_DIR: /Users/Shared/work
+    # ICM = inkscape ci macos
+    ICM_REPO_REF: 21f3e2d4
+    ICM_REPO_URL: https://gitlab.com/inkscape/infra/inkscape-ci-macos
+  before_script:
+    - |
+      git clone $ICM_REPO_URL icm
+      git -C icm checkout $ICM_REPO_REF
+      git -C icm submodule update --init --recursive
+  script:
+    - icm/jhb/usr/bin/archive install_dmg
+    - icm/build_inkscape.sh
+    - icm/jhb/usr/bin/archive uninstall_dmg archive
+  artifacts:
+    expire_in: 3 months
+    paths:
+      - Inkscape*.dmg
+      - "*.shadow.bz2"
+
+
+.windows:
+  stage: build
+  tags:
+    - saas-windows-medium-amd64
+  cache:
+    key: "cache-windows"
+    paths:
+      - ccache
+    when: always
+  variables:
+    MSYSTEM: UCRT64
+    CCACHE_COMPILERCHECK: content
+    CCACHE_DIR: $CI_PROJECT_DIR/ccache
+    CCACHE_MAXSIZE: 512M
+    IDW_VERSION: 168
+    IDW_NAME: ink$IDW_VERSION
+    IDW_RELEASE_URL: $CI_API_V4_URL/projects/46863172/packages/generic/windows/r$IDW_VERSION/$IDW_NAME.7z
+  before_script:
+    - wget.exe --quiet --no-check-certificate $IDW_RELEASE_URL
+    - 7z x -oC:/ "$Env:IDW_NAME.7z"
+
+
+inkscape:windows:
+  extends: .windows
+  retry: 2
+  parallel:
+    matrix:
+      - DIST: [ "7z", "exe", "msi" ]
+  rules:
+    - *do_not_run_for_schedules
+    - if: $DIST != "7z"
+      when: manual
+      allow_failure: true
+    - *run_otherwise
+  script:
+    # install Windows SDK for exe and msi jobs to provide
+    # 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe'
+    - if ( $Env:DIST -ne "7z" ) { choco install windows-sdk-10.1 -y }
+    # configure with CMake
+    - . "C:/$Env:IDW_NAME/msys2_shell.cmd" -defterm -no-start -ucrt64 -here -c "cmake -B build -G Ninja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+    # If we are building the MSI package, install extra build dependencies
+    - if ("${DIST}" -eq "msi") { & "$Env:CI_PROJECT_DIR\buildtools\windows-deps-install-wix4.ps1" }
+    # Kill the job before hitting runner's timeout. This way we can preserve the cache so the next retry
+    # will be able to advance the build further and eventually finish (after up to two retries, 3 jobs in total).
+    # Calculation is:  20 minutes for download and extraction of msys2
+    #                  80 minutes build (4800 seconds, see 'sleep' below)
+    #                  20 minutes as buffer and save cache
+    #                 --- --------------------------------
+    #                 120 minutes runner timeout
+    - Start-Job -ScriptBlock{sleep 4800; taskkill /t /F /IM "ninja.exe"}
+    # build with Ninja
+    - . "C:/$Env:IDW_NAME/msys2_shell.cmd" -defterm -no-start -ucrt64 -here -c "ninja -C build dist-win-${DIST}"
+  artifacts:
+    paths:
+      - build/inkscape*.${DIST}
+
+#tests, always run after building
+test:linux:
+  stage: test
+  rules:
+    - *do_not_run_for_schedules
+    - *run_otherwise
+  dependencies:
+    - inkscape:linux
+  needs: ["inkscape:linux"]
+  script:
+    - sed -i '/<policy domain="coder" rights="none"/d' /etc/ImageMagick-6/policy.xml
+    - cd build
+    - ctest -V
+  artifacts:
+    paths:
+      - build/testfiles
+      - build/Testing
+    when: on_failure
+
+test:macos:
+  extends: inkscape:macos
+  when: manual
+  allow_failure: true
+  stage: test
+  parallel:
+    matrix:
+      - ARCHITECTURE: [ "x86_64" ]
+  needs:
+    - job: inkscape:macos
+      parallel:
+        matrix:
+          - ARCHITECTURE: x86_64
+  script:
+    - icm/jhb/usr/bin/archive install_dmg
+    - |
+      if ! icm/310-inkscape_test.sh; then
+        tar -C $(icm/jhb/usr/bin/config get INK_BLD_DIR) -cpJf testfiles.tar.xz testfiles Testing
+        icm/jhb/usr/bin/archive uninstall_dmg
+        exit 1
+      else
+        icm/jhb/usr/bin/archive uninstall_dmg
+      fi
+  artifacts:
+    paths:
+      - testfiles.tar.xz
+    when: on_failure
+
+###########################
+#                         #
+#    MR code checkers     #
+#                         #
+###########################
+
+
+
+### This script checks for *merge requests* that they conform to the code style. It allows failures.
+  # cf ./_clang-format and https://inkscape.org/develop/coding-style/
+
+codequality:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_schedules
+    - *run_for_MR
+  script:
+    - git fetch $CI_MERGE_REQUEST_PROJECT_URL.git $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - echo "Your commit does not comply exactly with the clang-format style checker.\nPlease review the following diff or apply it with\n \$ git apply <<EOF"
+    - git diff $CI_MERGE_REQUEST_DIFF_BASE_SHA -U0 --no-color | clang-format-diff -p1 -style file | tee clang_format.diff
+    - echo "EOF"
+    - if [[ -s clang_format.diff ]]; then false; fi
+  allow_failure: true
+  artifacts:
+    paths:
+      - clang_format.diff
+
+
+### We embed script from third party libraries, that we sometimes update from their source. Hence we should NEVER modify them here before submitting the patch upstream!
+# Submodules do not need this treatment, so are exempted from the check.
+# Ideally, we should remove all this code and use them as packaged libraries. Unfortunately this check only works for merge requests.
+codeprotect:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_schedules
+    - *run_for_MR
+  script:
+    - git fetch $CI_MERGE_REQUEST_PROJECT_URL.git $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - git diff --name-only $CI_MERGE_REQUEST_DIFF_BASE_SHA src/3rdparty/*/ > changed
+    - git submodule foreach --quiet 'echo $name' > submodules
+    - comm -23 changed submodules | tee forbidden
+    - if [[ -s forbidden ]]; then echo "This commit modifies files that are in an dependency library. Make sure you update upstream first, *then* force the merge in Inkscape."; false; fi
+
+#### All files should have a licence
+
+check-license-headers:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_schedules
+    - *run_for_MR
+  script:
+    - python3 buildtools/check_license_headers.py
+
+
+### Several translation tests:
+#   - verify that the list of translatable files (POTFILES.*.in) are up to date
+#   - check if we can successfully re-generate inkscape.pot
+#   - sync all .po files with the updated inkscape.pot and run some automated checks on them
+#  (artifacts from this job are also used to generate translations statistics for the website)
+
+translations:
+  stage: test
+  needs: []
+  rules:
+    - *run_otherwise
+  script:
+    # make sure dependencies for inkscape.pot are up-to-date
+  - mkdir build && cd build && cmake .. && make inkscape_pot && cd .. || exit 1
+  - cd po/
+
+  # update POTFILES.*.in
+  - ./generate_POTFILES.sh
+
+  # update inkscape.pot and sync all .po files
+  - rm -f inkscape.pot
+  - cd ../build && make inkscape_pot && cd ../po || exit 1
+  - ./update_po_files.sh
+
+  artifacts:
+    name: "translations"
+    paths:
+      - po/
+
+### clang-tidy is an utility to check that some c++ code good practices and patterns are respected. We use it at 1% of its possibilities (only when it suggests fixes).
+
+# ... here only on modified files
+clangtidy:linux:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_schedules
+    - *run_for_MR
+  script:
+    - git fetch $CI_MERGE_REQUEST_PROJECT_URL.git $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    # "borrow" a 3rdparty file to dump header includes
+    - git diff $CI_MERGE_REQUEST_DIFF_BASE_SHA --name-only -- '**.h' | sed 's!.*!#include"../../../../&"!' | tee src/3rdparty/adaptagrams/libcola/box.cpp
+    - git diff $CI_MERGE_REQUEST_DIFF_BASE_SHA --name-only -- '**.cpp' | tee clang_tidy_files
+    - bash buildtools/clangtidy-helper.sh $(cat clang_tidy_files)
+
+
+# ... here on master commits
+clangtidyfull:linux:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_MR
+    - *do_not_run_for_schedules
+    - <<: *run_otherwise
+      changes:
+      - src/*
+  cache:
+    key: "cache-clang"
+    paths:
+      - ccache/
+  <<: *ccache_init
+  script:
+    - bash buildtools/clangtidy-helper.sh
+
+# Look for icon problems
+media-check:
+  stage: test
+  needs: []
+  rules:
+    - *do_not_run_for_schedules
+    - *run_otherwise
+  script:
+    - python3 buildtools/media-check-icons.py
+    - python3 buildtools/media-check-keys.py
+    - python3 buildtools/media-check-ui.py
+
+
+##################################################
+#                                                #
+#  Building https://inkscape.gitlab.io/inkscape  #
+#                                                #
+##################################################
+
+
+### scan-build is a static analysis tool. This job is *slow*.
+
+scan-build:
+  stage: test
+  rules:
+    - if: $SCHEDULED_JOB_NAME == "clang"
+  needs: []
+  script:
+    - apt-get update -yqq && apt-get install -y clang
+    - mkdir -p clang-build
+    - cd clang-build
+    - scan-build cmake .. -DCMAKE_BUILD_TYPE=Debug
+    - VERBOSE=1 scan-build -o ../scan make -j2
+  artifacts:
+    paths:
+      - scan/
+
+### doxygen
+source-doc:
+  stage: build
+  rules:
+    - if: $SCHEDULED_JOB_NAME == "source-doc"
+  script:
+    - cd buildtools
+    - doxygen Doxyfile
+    - doxygen Doxyfile-extensions
+    - cd ..
+  artifacts:
+    paths:
+      - doc/doxygen
+      - doc/doxygen-extensions
+
+
+# uploads the clang scan to user.gitlab.io/inkscape/
+pages:
+  stage: deploy
+  rules:
+    - if: $SCHEDULED_JOB_NAME == "clang"
+    - if: $SCHEDULED_JOB_NAME == "source-doc"
+  cache:
+    key: "cache-pages"
+    paths:
+      - public
+  dependencies:
+    - source-doc
+    - scan-build
+  script:
+    - mkdir -p public/
+    - sed "s/%DATE%/$(date '+%B %d, %Y')/" buildtools/ci-index.html > public/index.html
+    - if test -e scan; then rm -fr public/scan-build && cp -rv scan/* public/scan-build; fi
+    - if test -e doc/doxygen; then rm -fr public/doxygen && cp -rv doc/doxygen/html/. public/doxygen; fi
+    - if test -e doc/doxygen-extensions; then rm -fr public/doxygen-extensions && cp -rv doc/doxygen-extensions/html/. public/doxygen-extensions; fi
+  artifacts:
+    paths:
+      - public
+
+      
+#############################
+#                           #
+#  Update translation repo  #
+#                           #
+#############################
+
+# pushes code changes to the translations repo by updating the potfile
+translations:daily:
+  rules:
+    - if: $SCHEDULED_JOB_NAME == "translations-daily"
+      allow_failure: true # allows empty changesets
+  script:
+    - cd po && git checkout ${CI_COMMIT_BRANCH} && git pull
+    - ./generate_POTFILES.sh && cd ..
+    - mkdir build && cd build && cmake .. && make inkscape_pot && cd ../po
+    - git add . && git commit --author "Inkscape <inkscape-devel@lists.inkscape.org>" -m "Daily code update"
+    - git push https://ci:${TRANSLATION_TOKEN}@gitlab.com/inkscape/translations.git ${CI_COMMIT_BRANCH}
+    - ../buildtools/post_translation_statistics.sh
+
+# Pulls new translations made in weblate
+translations:weekly:
+  rules:
+    - if: $SCHEDULED_JOB_NAME == "translations-weekly"
+      allow_failure: true # to deal with empty changesets
+  script:
+    - git submodule update --remote po && git add po && git commit --author "Inkscape <inkscape-translator@lists.inkscape.org>" -m "update translations" && git push https://ci:${TRANSLATION_TOKEN}@gitlab.com/inkscape/inkscape.git HEAD:${CI_COMMIT_BRANCH}
+
+
+
+

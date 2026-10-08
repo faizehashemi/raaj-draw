@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="1122.5197"
+   height="793.70081"
+   viewBox="0 0 1122.5197 793.70081"
+   sodipodi:docname="rotated-gradients.pdf"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       x1="49.271114"
+       y1="38.464291"
+       x2="105.33476"
+       y2="100.78111"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(2.834646)"
+       spreadMethod="pad"
+       id="linearGradient4">
+      <stop
+         style="stop-opacity:1;stop-color:#669900"
+         offset="0"
+         id="stop3" />
+      <stop
+         style="stop-opacity:0;stop-color:#669900"
+         offset="1"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       x1="48.681511"
+       y1="169.41367"
+       x2="111.22161"
+       y2="233.85242"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(2.834646)"
+       spreadMethod="pad"
+       id="linearGradient8">
+      <stop
+         style="stop-opacity:1;stop-color:#cc0000"
+         offset="0"
+         id="stop7" />
+      <stop
+         style="stop-opacity:0;stop-color:#cc0000"
+         offset="1"
+         id="stop8" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="1122.5197"
+       height="793.70081"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:groupmode="layer"
+     inkscape:label="1">
+    <path
+       d="M 96.438,81.594 H 346.567 V 320.981 H 96.438 Z"
+       transform="matrix(0,-1.3333333,1.3333333,0,0,793.70079)"
+       style="fill:url(#linearGradient4);fill-rule:evenodd;stroke:#000000;stroke-width:30.9832;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       opacity="1"
+       id="path4" />
+    <path
+       id="path5"
+       d="M 92.969,454.07 H 343.094 V 693.457 H 92.969 Z"
+       style="fill:none;stroke:#000000;stroke-width:30.9832;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       transform="matrix(0,-1.3333333,1.3333333,0,0,793.70079)" />
+    <path
+       d="M 92.969,454.07 H 343.094 V 693.457 H 92.969 Z"
+       transform="matrix(0,-1.3333333,1.3333333,0,0,793.70079)"
+       style="fill:url(#linearGradient8);fill-rule:evenodd;stroke:none"
+       opacity="1"
+       id="path8" />
+  </g>
+</svg>

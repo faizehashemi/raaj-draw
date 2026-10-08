@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="793.70135"
+   height="1122.52"
+   viewBox="0 0 793.70135 1122.52"
+   sodipodi:docname="multiple-style-same-text-block.pdf"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="793.70135"
+       height="1122.52"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:groupmode="layer"
+     inkscape:label="1">
+    <text
+       id="text1"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,79.369333,101.43733)"><tspan
+         id="tspan1"
+         style="font-variant:normal;font-weight:normal;font-size:33.873px;font-family:'Latin Modern Sans';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0 0 10.602242"
+         y="0">SamSammington</tspan></text>
+    <text
+       id="text2"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,79.369333,145.908)"><tspan
+         id="tspan2"
+         style="font-style:oblique;font-variant:normal;font-weight:normal;font-size:17.2154px;font-family:'Latin Modern Sans';writing-mode:lr-tb;fill:#737373;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0 0 0 0 0 0 0 0 0 5.3884325"
+         y="0">CurriculumVitae</tspan></text>
+    <path
+       id="path2"
+       d="M 0,0 H 83.34 V 4.606 H 0 Z"
+       style="fill:#3873b3;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="matrix(1.3333333,0,0,-1.3333333,79.369333,196.44267)" />
+    <text
+       id="text3"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,206.36,198.728)"><tspan
+         id="tspan3"
+         style="font-variant:normal;font-weight:normal;font-size:14.3462px;font-family:'Latin Modern Sans';writing-mode:lr-tb;fill:#3873b3;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">Education</tspan></text>
+    <text
+       id="text4"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,161.39867,224.58667)"><tspan
+         id="tspan4"
+         style="font-variant:normal;font-weight:normal;font-size:10.9091px;font-family:'Latin Modern Sans';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">2023</tspan></text>
+    <text
+       id="text5"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,206.36,224.58667)"><tspan
+         id="tspan5"
+         style="font-variant:normal;font-weight:normal;font-size:10.9091px;font-family:'Latin Modern Sans';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0 0 0 0 0 0 0.29454544 3.643636 0 0 0 0.29454544 0 3.643636 0 3.6327269"
+         y="0">Inkscapeschoolofdesign</tspan></text>
+  </g>
+</svg>

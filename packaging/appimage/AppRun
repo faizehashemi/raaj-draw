@@ -1,0 +1,77 @@
+#!/bin/sh
+
+HERE="$(dirname "$(readlink -f "${0}")")"
+
+# Temporary workaround for broken libgc
+if [ -z "$_INKSCAPE_GC" ]; then
+    echo "Setting _INKSCAPE_GC=disable as a workaround for broken libgc" >&2
+    export _INKSCAPE_GC=disable
+fi
+
+# Custom AppRun script for Inkscape
+# by Simon Peter
+
+############################################################################################
+# Allow AppRun or the AppImage to be symlinked to, e.g.,
+# /usr/local/bin/inkview
+# or to be called with ./Inkscape*.AppImage inkview
+############################################################################################
+
+if [ -n "$APPIMAGE" ]; then
+    BINARY_NAME=$(basename "$ARGV0")
+else
+    BINARY_NAME=$(basename "$0")
+fi
+if [ -n "$1" ] && [ -e "$HERE/usr/bin/$1" ]; then
+    MAIN="$HERE/usr/bin/$1"
+    shift
+elif [ -e "$HERE/usr/bin/$BINARY_NAME" ]; then
+    MAIN="$HERE/usr/bin/$BINARY_NAME"
+else
+    MAIN="$HERE/usr/bin/inkscape"
+fi
+
+############################################################################################
+# Prefer to run the bundled executables (e.g., Python)
+############################################################################################
+
+export PATH="${HERE}/usr/bin:${PATH}"
+
+############################################################################################
+# Make sure commands launch Inkscape through this file to correctly set environment
+############################################################################################
+
+export INKSCAPE_COMMAND="${HERE}/AppRun"
+
+############################################################################################
+# Run experimental bundle that bundles everything if a private ld-linux-x86-64.so.2 is there
+############################################################################################
+
+PLATFORM=x86_64-linux-gnu
+
+# Glib/Gtk environment
+export GCONV_PATH="$HERE/usr/lib/$PLATFORM/gconv"
+export FONTCONFIG_FILE="$HERE/etc/fonts/fonts.conf"
+export GTK_EXE_PREFIX="$HERE/usr"
+GDK_PIXBUF_MODULEDIR="$(readlink -f "$HERE"/usr/lib/$PLATFORM/gdk-pixbuf-*/*/loaders/)"
+export GDK_PIXBUF_MODULEDIR
+GDK_PIXBUF_MODULE_FILE="$(readlink -f "$HERE"/usr/lib/$PLATFORM/gdk-pixbuf-*/*/loaders.cache)" # Patched to contain no paths
+export GDK_PIXBUF_MODULE_FILE
+export GI_TYPELIB_PATH="$HERE/usr/lib/$PLATFORM/girepository-1.0"
+
+# For bundled themes
+export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+
+# Shared library path
+LIBRARY_PATH="$HERE/lib/$PLATFORM"
+LIBRARY_PATH="$LIBRARY_PATH:$HERE/usr/lib/$PLATFORM"
+LIBRARY_PATH="$LIBRARY_PATH:$HERE/usr/lib"
+LIBRARY_PATH="$LIBRARY_PATH:$GDK_PIXBUF_MODULEDIR" # Otherwise getting "Unable to load image-loading module"
+
+# Otherwise getting "Unable to load image-loading module" when opening extension manager
+export LD_LIBRARY_PATH="$GDK_PIXBUF_MODULEDIR"
+
+if dirname "$0"| grep -q "tmp/.mount_"; then
+    echo "You should not use AppImage in production, but you can speed up the AppImage by following this guide: https://inkscape.org/learn/appimage/"
+fi
+exec "$HERE/lib/$PLATFORM/ld-linux-x86-64.so.2" --inhibit-cache --library-path "$LIBRARY_PATH" "$MAIN" "$@"
