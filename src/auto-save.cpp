@@ -81,7 +81,7 @@ AutoSave::save()
     // Find/create autosave directory
     std::string autosave_dir = prefs->getString("/options/autosave/path"); // Filenames should be std::string
     if (autosave_dir.empty()) {
-        autosave_dir = Glib::build_filename(Glib::get_user_cache_dir(), "inkscape");
+        autosave_dir = Glib::build_filename(Glib::get_user_cache_dir(), "raajdraw");
     }
 
     Glib::RefPtr<Gio::File> dir_file = Gio::File::create_for_path(autosave_dir);

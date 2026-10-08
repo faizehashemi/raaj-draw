@@ -1,0 +1,116 @@
+# Raaj Draw: build the Windows installer and the Linux AppImage.
+# Runs when a version tag (v1.4.4-raaj1, …) is pushed, or by hand from the Actions tab.
+# A tag build also publishes a GitHub Release, which draw.raajsoftware.com/download/* links to.
+
+name: Build Raaj Draw
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-2022
+    timeout-minutes: 360
+    env:
+      # Inkscape's prebuilt MSYS2 build environment (same as its own CI for 1.4.4; see .gitlab-ci.yml)
+      IDW_VERSION: "168"
+      CCACHE_DIR: ${{ github.workspace }}\ccache
+      CCACHE_MAXSIZE: 1G
+      CCACHE_COMPILERCHECK: content
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download build environment
+        shell: pwsh
+        run: |
+          $name = "ink$env:IDW_VERSION"
+          Invoke-WebRequest "https://gitlab.com/api/v4/projects/46863172/packages/generic/windows/r$env:IDW_VERSION/$name.7z" -OutFile "$name.7z"
+          7z x -oC:/ "$name.7z" | Out-Null
+          Remove-Item "$name.7z"
+
+      - name: Install NSIS
+        shell: pwsh
+        run: choco install nsis -y --no-progress
+
+      - uses: actions/cache@v4
+        with:
+          path: ccache
+          key: ccache-windows-${{ github.sha }}
+          restore-keys: ccache-windows-
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c `
+            "cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+
+      - name: Build installer (.exe) and portable archive (.7z)
+        shell: pwsh
+        run: |
+          & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c "ninja -C build dist-win-exe dist-win-7z"
+          Get-ChildItem build -Filter "raajdraw*" | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raajdraw-windows
+          path: |
+            build/raajdraw*.exe
+            build/raajdraw*.7z
+          if-no-files-found: error
+
+  appimage:
+    name: Linux AppImage
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    container:
+      # Inkscape's CI image for AppImages (Ubuntu 20.04, so the AppImage runs on older systems)
+      image: registry.gitlab.com/inkscape/inkscape-ci-docker/ubuntu-2004
+      options: --privileged
+    steps:
+      - name: Install git and libcurl
+        run: |
+          apt-get update
+          apt-get install -y git libcurl4-openssl-dev
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build AppImage
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          bash -ex packaging/appimage/generate.sh
+          ls -l Raaj_Draw*.AppImage*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raajdraw-linux
+          path: Raaj_Draw*.AppImage*
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, appimage]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Raaj Draw ${{ github.ref_name }}
+          files: dist/*
+          body: |
+            Raaj Draw for Windows (installer or portable .7z) and Linux (AppImage).
+            Sign in with your Raaj Software account when it starts; new accounts get a free 15-minute demo.
+            Raaj Draw is based on Inkscape 1.4.4 and is free software under the GNU GPL; the full source is in this repository.

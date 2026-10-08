@@ -209,7 +209,7 @@ sp_png_write_rgba_striped(SPDocument *doc,
 
     PngTextList textList;
 
-    textList.add("Software", "www.inkscape.org"); // Made by Inkscape comment
+    textList.add("Software", "Raaj Draw (https://draw.raajsoftware.com)"); // Made by Inkscape comment
     {
         const gchar* pngToDc[] = {"Title", "title",
                                "Author", "creator",

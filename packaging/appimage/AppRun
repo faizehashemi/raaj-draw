@@ -8,7 +8,7 @@ if [ -z "$_INKSCAPE_GC" ]; then
     export _INKSCAPE_GC=disable
 fi
 
-# Custom AppRun script for Inkscape
+# Custom AppRun script for Raaj Draw (based on Inkscape's)
 # by Simon Peter
 
 ############################################################################################
@@ -28,7 +28,7 @@ if [ -n "$1" ] && [ -e "$HERE/usr/bin/$1" ]; then
 elif [ -e "$HERE/usr/bin/$BINARY_NAME" ]; then
     MAIN="$HERE/usr/bin/$BINARY_NAME"
 else
-    MAIN="$HERE/usr/bin/inkscape"
+    MAIN="$HERE/usr/bin/raajdraw"
 fi
 
 ############################################################################################

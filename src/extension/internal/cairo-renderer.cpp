@@ -811,7 +811,7 @@ void CairoRenderer::setMetadata(CairoRenderContext *ctx, SPDocument *doc) {
     }
 
     // creator
-    ctx->_metadata.creator = Glib::ustring::compose("Inkscape %1 (https://inkscape.org)",
+    ctx->_metadata.creator = Glib::ustring::compose("Raaj Draw %1 (https://draw.raajsoftware.com)",
                                                     Inkscape::version_string_without_revision);
 
     // cdate (only used for for reproducible builds hack)

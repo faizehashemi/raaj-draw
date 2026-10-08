@@ -410,14 +410,14 @@ if(WIN32)
       DESTINATION bin)
     # convenience launcher
     install(FILES
-      "packaging/win32/Run Inkscape and create debug trace.bat"
+      "packaging/win32/Run Raaj Draw and create debug trace.bat"
       DESTINATION .)
   endif()
 
   # convenience launchers
   install(FILES
-    "packaging/win32/Run Inkscape !.bat"
-    "packaging/win32/Run Inkscape with GTK Inspector.bat"
+    "packaging/win32/Run Raaj Draw !.bat"
+    "packaging/win32/Run Raaj Draw with GTK Inspector.bat"
     DESTINATION .)
 
 endif()

@@ -696,7 +696,7 @@ If you would like to get involved and make the next version of Inkscape even bet
                 <property name="receives-default">True</property>
                 <property name="hexpand">True</property>
                 <property name="relief">none</property>
-                <property name="uri">https://inkscape.org/splash/contribute/</property>
+                <property name="uri">https://draw.raajsoftware.com/#pricing</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
@@ -758,7 +758,7 @@ Contribute Time</property>
                 <property name="receives-default">True</property>
                 <property name="hexpand">True</property>
                 <property name="relief">none</property>
-                <property name="uri">https://inkscape.org/splash/support/</property>
+                <property name="uri">https://draw.raajsoftware.com/account</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>

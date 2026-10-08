@@ -6,7 +6,7 @@ set(INKSCAPE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 include(CMakeScripts/inkscape-version.cmake)
 
 # set distribution prefix (used as filename for distributable packages)
-set(INKSCAPE_DIST_PREFIX "${PROJECT_NAME}-${INKSCAPE_VERSION}")
+set(INKSCAPE_DIST_PREFIX "raajdraw-${INKSCAPE_VERSION}")
 if(INKSCAPE_REVISION_DATE AND INKSCAPE_REVISION_HASH)
     set(INKSCAPE_DIST_PREFIX ${INKSCAPE_DIST_PREFIX}_${INKSCAPE_REVISION_DATE}_${INKSCAPE_REVISION_HASH})
 endif()

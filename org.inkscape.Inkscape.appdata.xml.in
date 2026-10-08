@@ -5,10 +5,10 @@
   <id>org.inkscape.Inkscape</id>
   <launchable type="desktop-id">org.inkscape.Inkscape.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
-  <developer_name>The Inkscape Community</developer_name>
+  <developer_name>Raaj Software (based on Inkscape)</developer_name>
   <project_license>GPL-2.0-or-later</project_license>
   <translation type="gettext">inkscape</translation>
-  <name>Inkscape</name>
+  <name>Raaj Draw</name>
   <summary>Vector Graphics Editor</summary>
   <description>
     <p>
@@ -29,11 +29,10 @@
   <categories>
     <category>Graphics</category>
   </categories>
-  <url type="homepage">https://inkscape.org</url>
-  <url type="bugtracker">https://inkscape.org/contribute/report-bugs</url>
+  <url type="homepage">https://draw.raajsoftware.com/</url>
+  <url type="bugtracker">https://raajsoftware.com/contact</url>
   <url type="help">https://inkscape.org/learn</url>
-  <url type="donation">https://inkscape.org/support-us/donate</url>
-  <url type="translate">https://inkscape.org/contribute/translations</url>
+    <url type="translate">https://inkscape.org/contribute/translations</url>
   <url type="faq">https://inkscape.org/learn/faq</url>
   <url type="vcs-browser">https://gitlab.com/inkscape/inkscape</url>
   <url type="contribute">https://inkscape.org/contribute</url>

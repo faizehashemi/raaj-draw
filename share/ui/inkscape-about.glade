@@ -312,7 +312,7 @@
                 </child>
                 <child>
                   <object class="GtkLinkButton" id="website">
-                    <property name="label">www.inkscape.org</property>
+                    <property name="label">draw.raajsoftware.com</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
@@ -320,7 +320,7 @@
                     <property name="tooltip-text" translatable="yes">Link to the official website</property>
                     <property name="margin-start">15</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://inkscape.org/?about-screen=1</property>
+                    <property name="uri">https://draw.raajsoftware.com/</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>

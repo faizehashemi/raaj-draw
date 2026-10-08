@@ -35,7 +35,7 @@ sp_repr_document_new(char const *rootname)
     if (!strcmp(rootname, "svg:svg")) {
         doc->setAttribute("version", "1.0");
         doc->setAttribute("standalone", "no");
-        Inkscape::XML::Node *comment = doc->createComment(" Created with Inkscape (http://www.inkscape.org/) ");
+        Inkscape::XML::Node *comment = doc->createComment(" Created with Raaj Draw (https://draw.raajsoftware.com/), based on Inkscape ");
         doc->appendChild(comment);
         Inkscape::GC::release(comment);
     }

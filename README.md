@@ -1,3 +1,23 @@
+# Raaj Draw
+
+**Raaj Draw** is a vector graphics editor by [Raaj Software](https://raajsoftware.com), based on
+[Inkscape](https://inkscape.org) 1.4.4. Downloads, accounts and plans: **https://draw.raajsoftware.com**.
+
+Raaj Draw is free software under the GNU General Public License (version 2 or later), like Inkscape.
+This repository is its complete source. "Inkscape" is a trademark of the Inkscape project; Raaj Draw is not
+Inkscape and is not endorsed by the Inkscape project.
+
+What differs from Inkscape (all on the `raaj-draw` branch, on top of the upstream `INKSCAPE_1_4_4` tag):
+
+- `src/raaj/` — sign-in with a Raaj Software account (in the browser) and a check of the free 15-minute demo
+  or paid plan when the app starts and every 10 minutes. Only the GUI is checked; command-line use is not.
+- Branding: programs `raajdraw` / `raajdraw-view`, application ID `com.raajsoftware.RaajDraw`, settings in
+  `raajdraw` folders, icons and screens, installer names. Applied by `python raaj/rebrand.py` (re-run after
+  merging a new Inkscape release) and `python raaj/make-assets.py` (artwork).
+- `.github/workflows/build.yml` — builds the Windows installer and the Linux AppImage on GitHub Actions.
+
+---
+
 Inkscape. Draw Freely.
 ======================
 

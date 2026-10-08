@@ -5,29 +5,29 @@
 
 ## General ##
 
-set(CPACK_PACKAGE_NAME "Inkscape")
-set(CPACK_PACKAGE_VENDOR "Inkscape")
+set(CPACK_PACKAGE_NAME "Raaj Draw")
+set(CPACK_PACKAGE_VENDOR "Raaj Software")
 set(CPACK_PACKAGE_VERSION_MAJOR ${INKSCAPE_VERSION_MAJOR}) # TODO: Can be set via project(), see CMAKE_PROJECT_VERSION_PATCH
 set(CPACK_PACKAGE_VERSION_MINOR ${INKSCAPE_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${INKSCAPE_VERSION_PATCH})
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${INKSCAPE_VERSION_SUFFIX}")
 set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md") # TODO: Where is this used? Do we need a better source?
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Open-source vector graphics editor")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://inkscape.org")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Raaj Draw vector graphics editor, based on Inkscape")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://draw.raajsoftware.com")
 set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/share/branding/inkscape.svg") # TODO: Can any generator make use of this?
-set(CPACK_PACKAGE_CONTACT "Inkscape developers <inkscape-devel@lists.inkscape.org>")
+set(CPACK_PACKAGE_CONTACT "Raaj Software <taha@raajsoftware.com>")
 
 set(CPACK_PACKAGE_FILE_NAME ${INKSCAPE_DIST_PREFIX})
 set(CPACK_PACKAGE_CHECKSUM "SHA256")
 
-set(CPACK_PACKAGE_EXECUTABLES "inkscape;Inkscape;inkview;Inkview")
-set(CPACK_CREATE_DESKTOP_LINKS "inkscape")
+set(CPACK_PACKAGE_EXECUTABLES "raajdraw;Raaj Draw")
+set(CPACK_CREATE_DESKTOP_LINKS "raajdraw")
 
 if(WIN32)
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Inkscape")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Raaj Draw")
     set(CPACK_STRIP_FILES FALSE)
 else()
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "inkscape")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "raajdraw")
     set(CPACK_STRIP_FILES TRUE)
 endif()
 
@@ -60,14 +60,14 @@ set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/share/branding/inkscape.ico")
 set(CPACK_NSIS_MUI_HEADERIMAGE "${CMAKE_SOURCE_DIR}/packaging/nsis/header.bmp")
 set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${CMAKE_SOURCE_DIR}/packaging/nsis/welcomefinish.bmp")
 set(CPACK_NSIS_IGNORE_LICENSE_PAGE 1)
-set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/inkscape.exe")
+set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/raajdraw.exe")
 set(CPACK_NSIS_HELP_LINK "${CPACK_PACKAGE_HOMEPAGE_URL}")
 set(CPACK_NSIS_URL_INFO_ABOUT "${CPACK_PACKAGE_HOMEPAGE_URL}")
-set(CPACK_NSIS_MENU_LINKS "${CPACK_PACKAGE_HOMEPAGE_URL}" "Inkscape Homepage")
+set(CPACK_NSIS_MENU_LINKS "${CPACK_PACKAGE_HOMEPAGE_URL}" "Raaj Draw website")
 set(CPACK_NSIS_COMPRESSOR "/SOLID lzma") # zlib|bzip2|lzma
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
 set(CPACK_NSIS_MODIFY_PATH "ON") # while the name does not suggest it, this also provides the possibility to add desktop icons
-set(CPACK_NSIS_MUI_FINISHPAGE_RUN "inkscape") # TODO: this results in instance with administrative privileges!
+set(CPACK_NSIS_MUI_FINISHPAGE_RUN "raajdraw") # TODO: this results in instance with administrative privileges!
 set(CPACK_NSIS_MANIFEST_DPI_AWARE ON) # Make the text not blurry in installer
 
 # Additional commands placed very early in the NSIS file.
@@ -89,19 +89,19 @@ file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/packaging/nsis/fileassoc.nsh" native_pa
 string(REPLACE "\\" "\\\\" native_path "${native_path}")
 set(CPACK_NSIS_EXTRA_PREINSTALL_COMMANDS "!include '${native_path}'")
 set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "\
-  WriteRegStr SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\inkscape.exe' '' '$INSTDIR\\\\bin\\\\inkscape.exe'\n\
-  WriteRegStr SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\inkscape.exe' 'Path' '$INSTDIR\\\\bin'\n\
-  !insertmacro APP_ASSOCIATE 'svg' 'Inkscape.SVG' 'Scalable Vector Graphics' '$INSTDIR\\\\bin\\\\inkscape.exe,0' 'Open with Inkscape' '$INSTDIR\\\\bin\\\\inkscape.exe \\\"%1\\\"'\n\
-  !insertmacro APP_ASSOCIATE 'svgz' 'Inkscape.SVGZ' 'Compressed Scalable Vector Graphics' '$INSTDIR\\\\bin\\\\inkscape.exe,0' 'Open with Inkscape' '$INSTDIR\\\\bin\\\\inkscape.exe \\\"%1\\\"'\n\
+  WriteRegStr SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\raajdraw.exe' '' '$INSTDIR\\\\bin\\\\raajdraw.exe'\n\
+  WriteRegStr SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\raajdraw.exe' 'Path' '$INSTDIR\\\\bin'\n\
+  !insertmacro APP_ASSOCIATE 'svg' 'RaajDraw.SVG' 'Scalable Vector Graphics' '$INSTDIR\\\\bin\\\\raajdraw.exe,0' 'Open with Raaj Draw' '$INSTDIR\\\\bin\\\\raajdraw.exe \\\"%1\\\"'\n\
+  !insertmacro APP_ASSOCIATE 'svgz' 'RaajDraw.SVGZ' 'Compressed Scalable Vector Graphics' '$INSTDIR\\\\bin\\\\raajdraw.exe,0' 'Open with Raaj Draw' '$INSTDIR\\\\bin\\\\raajdraw.exe \\\"%1\\\"'\n\
   !insertmacro UPDATEFILEASSOC")
 set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "\
-  DeleteRegKey SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\inkscape.exe'\n\
-  !insertmacro APP_UNASSOCIATE 'svg' 'Inkscape.SVG'\n\
-  !insertmacro APP_UNASSOCIATE 'svgz' 'Inkscape.SVGZ'\n\
+  DeleteRegKey SHCTX 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\raajdraw.exe'\n\
+  !insertmacro APP_UNASSOCIATE 'svg' 'RaajDraw.SVG'\n\
+  !insertmacro APP_UNASSOCIATE 'svgz' 'RaajDraw.SVGZ'\n\
   !insertmacro UPDATEFILEASSOC")
 
 # WIX (Windows .msi installer)
-set(CPACK_WIX_UPGRADE_GUID "4d5fedaa-84a0-48be-bd2a-08246398361a")
+set(CPACK_WIX_UPGRADE_GUID "7c1f2b8e-5a3d-4f6b-9e21-3b6d0c9a8f12")
 set(CPACK_WIX_VERSION 4)
 set(CPACK_WIX_PRODUCT_ICON "${CMAKE_SOURCE_DIR}/share/branding/inkscape.ico")
 set(CPACK_WIX_UI_BANNER "${CMAKE_SOURCE_DIR}/packaging/wix/Bitmaps/banner.bmp")
@@ -159,23 +159,23 @@ cpack_add_component_group(
                     DISPLAY_NAME "Program Files"
                     EXPANDED)
 cpack_add_component(inkscape
-                    DISPLAY_NAME "Inkscape SVG Editor"
-                    DESCRIPTION "Inkscape core files and dependencies"
+                    DISPLAY_NAME "Raaj Draw"
+                    DESCRIPTION "Raaj Draw core files and dependencies"
                     GROUP "group_1_program_files"
                     REQUIRED)
 cpack_add_component(python
                     DISPLAY_NAME "Python"
-                    DESCRIPTION "Python interpreter (required to run Inkscape extensions)"
+                    DESCRIPTION "Python interpreter (required to run extensions)"
                     GROUP "group_1_program_files"
                     INSTALL_TYPES full compact)
 
 cpack_add_component_group(
                     group_2_inkscape_data
-                    DISPLAY_NAME "Inkscape Data"
+                    DISPLAY_NAME "Raaj Draw data"
                     EXPANDED)
 cpack_add_component(extensions
                     DISPLAY_NAME "Extensions"
-                    DESCRIPTION "Inkscape extensions (including many import and export plugins)"
+                    DESCRIPTION "Extensions (including many import and export plugins)"
                     GROUP "group_2_inkscape_data"
                     INSTALL_TYPES full compact)
 cpack_add_component(extension_manager
@@ -186,17 +186,17 @@ cpack_add_component(extension_manager
                     INSTALL_TYPES full compact)
 cpack_add_component(themes
                     DISPLAY_NAME "Themes"
-                    DESCRIPTION "Inkscape themes (look and feel including icons)"
+                    DESCRIPTION "Themes (look and feel including icons)"
                     GROUP "group_2_inkscape_data"
                     INSTALL_TYPES full compact)
 cpack_add_component(examples
                     DISPLAY_NAME "Examples"
-                    DESCRIPTION "Example files created in Inkscape"
+                    DESCRIPTION "Example drawings"
                     GROUP "group_2_inkscape_data"
                     INSTALL_TYPES full)
 cpack_add_component(tutorials
                     DISPLAY_NAME "Tutorials"
-                    DESCRIPTION "Tutorials teaching Inkscape usage"
+                    DESCRIPTION "Tutorials"
                     GROUP "group_2_inkscape_data"
                     INSTALL_TYPES full)
 

@@ -265,7 +265,7 @@ void show_about()
     // Automatic signal handling (requires -rdynamic compile flag)
     //gtk_builder_connect_signals(builder->gobj(), NULL);
 
-    auto text = Inkscape::inkscape_version();
+    auto text = std::string("Raaj Draw ") + Inkscape::version_string + " (based on Inkscape)";
     version->set_label(text);
     version->signal_clicked().connect(
         sigc::bind(&copy, version, label, std::move(text)));

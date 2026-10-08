@@ -460,7 +460,7 @@ Application::crash_handler (int /*signum*/)
     Inkscape::Preferences::unload(false);
 
     fprintf (stderr, "Emergency save completed. Inkscape will close now.\n");
-    fprintf (stderr, "If you can reproduce this crash, please file a bug at https://inkscape.org/report\n");
+    fprintf (stderr, "If you can reproduce this crash, please report it at https://raajsoftware.com/contact\n");
     fprintf (stderr, "with a detailed description of the steps leading to the crash, so we can fix it.\n");
 
     /* Show nice dialog box */

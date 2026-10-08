@@ -613,7 +613,7 @@ InkscapeApplication::InkscapeApplication()
 
     using T = Gio::Application;
 
-    auto app_id = Glib::ustring("org.inkscape.Inkscape");
+    auto app_id = Glib::ustring("com.raajsoftware.RaajDraw");
     auto flags = Gio::APPLICATION_HANDLES_OPEN | // Use default file opening.
                  Gio::APPLICATION_CAN_OVERRIDE_APP_ID;
     auto non_unique = false;
@@ -1535,7 +1535,7 @@ InkscapeApplication::on_handle_local_options(const Glib::RefPtr<Glib::VariantDic
     if (options->contains("app-id-tag")) {
         Glib::ustring id_tag;
         options->lookup_value("app-id-tag", id_tag);
-        Glib::ustring app_id = "org.inkscape.Inkscape." + id_tag;
+        Glib::ustring app_id = "com.raajsoftware.RaajDraw." + id_tag;
         if (Gio::Application::id_is_valid(app_id)) {
             _gio_application->set_id(app_id);
         } else {
@@ -1662,7 +1662,7 @@ InkscapeApplication::on_handle_local_options(const Glib::RefPtr<Glib::VariantDic
     bool use_active_window = options->contains("active-window");
     if (!options->contains("app-id-tag") && ((_with_gui == false && use_active_window == false) ||
                                              (Glib::getenv("SELF_CALL") != "" && _with_gui == true))) {
-        Glib::ustring app_id = "org.inkscape.Inkscape.p" + std::to_string(getpid());
+        Glib::ustring app_id = "com.raajsoftware.RaajDraw.p" + std::to_string(getpid());
         _gio_application->set_id(app_id);
     }
 

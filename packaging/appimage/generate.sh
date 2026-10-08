@@ -143,10 +143,10 @@ for so in $(find \
 done
 
 ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract-and-run appdir/usr/share/applications/org.inkscape.Inkscape.desktop \
-  -appimage -unsupported-bundle-everything -executable=appdir/usr/bin/inkview \
+  -appimage -unsupported-bundle-everything -executable=appdir/usr/bin/raajdraw-view \
   -executable=appdir/usr/lib/inkscape/libinkscape_base.so \
   -executable=appdir/usr/bin/python${PY_VER} \
   "${linuxdeployqtargs[@]}"
 
 #  -executable=appdir/usr/lib/x86_64-linux-gnu/inkscape/libinkscape_base.so \
-mv Inkscape*.AppImage* ../
+mv Raaj_Draw*.AppImage* ../

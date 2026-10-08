@@ -151,6 +151,24 @@ size_t on_data(char *ptr, size_t size, size_t count, void *userdata)
     return size * count;
 }
 
+/// The AppImage bundles a libcurl built on Ubuntu, which only knows Debian's certificate path.
+char const *ca_bundle()
+{
+    static char const *const paths[] = {
+        "/etc/ssl/certs/ca-certificates.crt",                // Debian, Ubuntu, Arch
+        "/etc/pki/tls/certs/ca-bundle.crt",                  // Fedora, RHEL
+        "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem", // newer Fedora
+        "/etc/ssl/ca-bundle.pem",                            // openSUSE
+        "/etc/ssl/cert.pem",                                 // Alpine, macOS
+    };
+    for (auto path : paths) {
+        if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+            return path;
+        }
+    }
+    return nullptr;
+}
+
 Response do_request(std::string const &method, std::string const &url, std::string const &body,
                     std::string const &bearer)
 {
@@ -184,6 +202,9 @@ Response do_request(std::string const &method, std::string const &url, std::stri
     curl_easy_setopt(h, CURLOPT_CONNECTTIMEOUT, 10L);
     curl_easy_setopt(h, CURLOPT_TIMEOUT, 25L);
     curl_easy_setopt(h, CURLOPT_NOSIGNAL, 1L);
+    if (auto cainfo = ca_bundle()) {
+        curl_easy_setopt(h, CURLOPT_CAINFO, cainfo);
+    }
     CURLcode rc = curl_easy_perform(h);
     if (rc != CURLE_OK) {
         r.error = curl_easy_strerror(rc);

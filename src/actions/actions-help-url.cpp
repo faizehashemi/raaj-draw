@@ -40,7 +40,7 @@ void help_open_url(const Glib::ustring &url, Gtk::Window *window)
 
 void help_url_ask_question(InkscapeWindow *win, const char *lang)
 {
-    Glib::ustring url = Glib::ustring::compose("https://inkscape.org/%1/community/", lang);
+    Glib::ustring url = "https://raajsoftware.com/contact";
     help_open_url(url, win);
 }
 
@@ -64,13 +64,13 @@ void help_url_keys(InkscapeWindow *win, const char *lang, const Glib::ustring br
 
 void help_url_release_notes(InkscapeWindow *win, const char *lang, const char *version, const bool development_version)
 {
-    Glib::ustring url = Glib::ustring::compose("https://inkscape.org/%1/release/inkscape-%2", lang, development_version ? "master" : version);
+    Glib::ustring url = "https://draw.raajsoftware.com/";
     help_open_url(url, win);
 }
 
 void help_url_report_bug(InkscapeWindow *win, const char *lang)
 {
-    Glib::ustring url = Glib::ustring::compose("https://inkscape.org/%1/contribute/report-bugs/", lang);
+    Glib::ustring url = "https://raajsoftware.com/contact";
     help_open_url(url, win);
 }
 
@@ -94,7 +94,7 @@ void help_url_inkex(InkscapeWindow *win)
 
 void help_url_donate(InkscapeWindow *win, const char *lang, const char *version)
 {
-    Glib::ustring url = Glib::ustring::compose("https://inkscape.org/%1/donate#lang=%1&version=%2", lang, version);
+    Glib::ustring url = "https://draw.raajsoftware.com/account";
     help_open_url(url, win);
 }
 

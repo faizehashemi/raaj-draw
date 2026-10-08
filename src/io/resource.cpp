@@ -37,7 +37,7 @@ using Inkscape::IO::file_test;
 
 namespace Inkscape::IO::Resource {
 
-#define INKSCAPE_PROFILE_DIR "inkscape"
+#define INKSCAPE_PROFILE_DIR "raajdraw"
 
 gchar *_get_path(Domain domain, Type type, char const *filename, char const *extra=nullptr)
 {
@@ -69,7 +69,7 @@ gchar *_get_path(Domain domain, Type type, char const *filename, char const *ext
         } break;
         case CACHE: {
             g_assert(type == NONE);
-            return g_build_filename(g_get_user_cache_dir(), "inkscape", filename, extra, nullptr);
+            return g_build_filename(g_get_user_cache_dir(), "raajdraw", filename, extra, nullptr);
         } break;
 
         case SYSTEM:
