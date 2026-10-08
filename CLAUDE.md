@@ -34,5 +34,11 @@ Website, accounts and billing live in the separate project `D:\raajdraw` (draw.r
 - Nothing has been compiled locally (no toolchain on this PC); CI is the first compile. Expect fixes after the first run.
 
 ## Status (2026-10-08)
-- 3 commits on `raaj-draw`; untested build. Waiting on: GitHub repo from the owner, first CI run, code-signing decision.
-- Plan limits: computers per plan 1/2/3/5 (placeholders, in the website's shared/plans.js).
+- GitHub: https://github.com/faizehashemi/raaj-draw (public). `main` = one "Inkscape 1.4.4" commit + our commits
+  (the shallow upstream history can't be pushed). Remote `upstream` = gitlab.com/inkscape/inkscape.
+- Releases: v1.4.4-raaj1, **v1.4.4-raaj2** (current: Raaj Draw window titles). Builds pass on Windows and Linux.
+- CI logs are only visible when signed in to GitHub, so failed builds publish their error lines as annotations
+  (raaj/ci-report.py), readable anonymously at /repos/.../check-runs/<job>/annotations. Builds use -k to show all errors.
+- Tested raaj1 portable build locally: CLI export works; GUI with RAAJDRAW_SITE=http://localhost:8790 and a seeded
+  token checks the plan, and shows the "plan ended" dialog when expired.
+- Not yet tested by a person: the full browser sign-in click-through on a fresh install, the Linux AppImage.
