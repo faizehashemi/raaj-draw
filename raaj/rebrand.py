@@ -3,6 +3,8 @@
 """Raaj Draw: apply the Raaj Draw branding on top of Inkscape.
 
 Run from the repository root after merging a new Inkscape release:  python raaj/rebrand.py
+The builds run "python3 raaj/rebrand.py --translations" before CMake, because po/ is Inkscape's
+translations submodule and the branded catalogs are not committed. Works with Python 3.8+.
 It is idempotent: edits that are already applied are skipped. An edit whose original text is
 missing (because upstream changed it) stops the script, so nothing is silently left unbranded.
 
@@ -45,7 +47,8 @@ def edit(path, pairs):
         text = text.replace(old, new)
         changed = True
     if changed:
-        p.write_text(text, encoding="utf-8", errors="surrogateescape", newline="")
+        with open(p, "w", encoding="utf-8", errors="surrogateescape", newline="") as f:
+            f.write(text)
         print("edited", path)
 
 
@@ -366,7 +369,8 @@ def brand_po(path):
         return 0
     for s, t, new in sorted(edits, key=lambda x: x[0], reverse=True):
         lines[s:t] = new
-    path.write_text("".join(lines), encoding="utf-8", newline="")
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write("".join(lines))
     return len(edits)
 
 
@@ -400,7 +404,8 @@ def write_en_po():
             out += [l + "\n" for l in po_quote_block("msgstr", target)]
         out.append("\n")
         count += 1
-    (ROOT / "po/en.po").write_text("".join(out), encoding="utf-8", newline="\n")
+    with open(ROOT / "po/en.po", "w", encoding="utf-8", newline="\n") as f:
+        f.write("".join(out))
     print(f"wrote po/en.po ({count} strings)")
 
 
@@ -416,7 +421,8 @@ def translations():
 
 
 if __name__ == "__main__":
-    file_edits()
+    if "--translations" not in sys.argv:
+        file_edits()
     translations()
     if problems:
         print("\nSTOPPED — these edits did not match (upstream changed?):", file=sys.stderr)

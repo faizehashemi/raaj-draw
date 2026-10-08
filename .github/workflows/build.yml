@@ -40,6 +40,10 @@ jobs:
         shell: pwsh
         run: choco install nsis -y --no-progress
 
+      - name: Brand the translations (po/ is Inkscape's submodule)
+        shell: pwsh
+        run: python raaj/rebrand.py --translations
+
       - uses: actions/cache@v4
         with:
           path: ccache
@@ -87,6 +91,7 @@ jobs:
       - name: Build AppImage
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 raaj/rebrand.py --translations
           bash -ex packaging/appimage/generate.sh
           ls -l Raaj_Draw*.AppImage*
 
