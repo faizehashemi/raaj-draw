@@ -1324,8 +1324,8 @@
           <attribute name="action">win.help-url-release-notes</attribute>
         </item>
         <item>
-          <attribute name="label" translatable="yes">Donate</attribute>
-          <attribute name="action">win.help-url-donate</attribute>
+          <attribute name="label" translatable="yes">Raaj Draw _Account…</attribute>
+          <attribute name="action">app.raaj-account</attribute>
         </item>
         <item>
           <attribute name="label" translatable="yes">_About Inkscape</attribute>

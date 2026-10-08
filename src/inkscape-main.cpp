@@ -35,6 +35,18 @@ static void set_extensions_env()
         gchar *new_path = g_strdup_printf("%s" G_SEARCHPATH_SEPARATOR_S "%s", program_dir, path);
         g_setenv("PATH", new_path, true);
         g_free(new_path);
+
+        // Raaj Draw: the program is called raajdraw, not inkscape. inkex calls $INKSCAPE_COMMAND
+        // (default "inkscape"), so point it at this program. On Windows use raajdraw.exe, as inkex
+        // does upstream (raajdraw.com would flash a console window).
+#ifdef _WIN32
+        auto command = Glib::build_filename(program_dir, "raajdraw.exe");
+#else
+        auto command = Glib::build_filename(program_dir, "raajdraw");
+#endif
+        if (!g_getenv("INKSCAPE_COMMAND")) {
+            Glib::setenv("INKSCAPE_COMMAND", command);
+        }
     }
 
     // add various locations to PYTHONPATH so extensions find their modules

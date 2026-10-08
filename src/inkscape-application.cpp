@@ -37,6 +37,7 @@
 
 #include "inkscape-application.h"
 #include "preferences.h"
+#include "raaj/account.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"      // Defines ENABLE_NLS
@@ -46,6 +47,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cerrno>  // History file
+#include <cstdlib> // std::exit (Raaj Draw sign-in declined)
 #include <regex>
 #include <numeric>
 #include <unistd.h>
@@ -1097,6 +1099,15 @@ InkscapeApplication::on_startup()
 
     // Add tool based shortcut meta-data
     init_tool_shortcuts(this);
+
+    // Raaj Draw: sign in and check the free demo or plan before any document window opens.
+    // Only the GUI is checked; command-line use (also by extensions) is not.
+    gapp->add_action("raaj-account", [this] {
+        Raaj::Account::get().show_account_dialog(gtk_app() ? gtk_app()->get_active_window() : nullptr);
+    });
+    if (gtk_app() && !Raaj::Account::get().start(gtk_app())) {
+        std::exit(EXIT_SUCCESS);
+    }
 }
 
 // Open document window with default document or pipe. Either this or on_open() is called.

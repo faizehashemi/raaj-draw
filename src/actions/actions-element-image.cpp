@@ -40,7 +40,7 @@ Glib::ustring image_get_editor_name(bool is_svg)
 
     Glib::ustring editor;
     if (is_svg) {
-        editor = prefs->getString("/options/svgeditor/value", "inkscape");
+        editor = prefs->getString("/options/svgeditor/value", "raajdraw");
     } else {
         editor = prefs->getString("/options/bitmapeditor/value", "gimp");
     }

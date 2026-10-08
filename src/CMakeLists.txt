@@ -340,6 +340,14 @@ set(inkscape_SRC
   ${inkscape_SRC}
 )
 
+# Raaj Draw: account sign-in and plan check (src/raaj)
+list(APPEND inkscape_SRC
+  raaj/account.cpp
+  raaj/http.cpp
+  raaj/account.h
+  raaj/http.h
+)
+
 # -----------------------------------------------------------------------------
 # Setup the executable
 # -----------------------------------------------------------------------------
@@ -354,37 +362,40 @@ if(WIN32)
   # Configure and add the platform specific resource files (enabling the app icon).
   string(TIMESTAMP COPYRIGHT_YEAR %Y)
   
-  set(FILE_NAME inkscape)
-  set(PROGRAM_NAME Inkscape)
-  set(PROGRAM_DESCRIPTION "Inkscape vector graphics editor")
+  set(FILE_NAME raajdraw)
+  set(PROGRAM_NAME "Raaj Draw")
+  set(PROGRAM_DESCRIPTION "Raaj Draw vector graphics editor (based on Inkscape)")
   configure_file(inkscape.rc ${CMAKE_BINARY_DIR}/src/inkscape.rc)
-  configure_file(inkscape-manifest.xml ${CMAKE_BINARY_DIR}/src/inkscape-manifest.xml)  
+  configure_file(inkscape-manifest.xml ${CMAKE_BINARY_DIR}/src/${FILE_NAME}-manifest.xml)
   list(APPEND main_SRC ${CMAKE_BINARY_DIR}/src/inkscape.rc)
   
-  set(FILE_NAME inkview)
-  set(PROGRAM_NAME Inkview)
-  set(PROGRAM_DESCRIPTION "Inkview vector graphics viewer")
+  set(FILE_NAME raajdraw-view)
+  set(PROGRAM_NAME "Raaj Draw Viewer")
+  set(PROGRAM_DESCRIPTION "Raaj Draw vector graphics viewer (based on Inkview)")
   configure_file(inkscape.rc ${CMAKE_BINARY_DIR}/src/inkview.rc)
-  configure_file(inkscape-manifest.xml ${CMAKE_BINARY_DIR}/src/inkview-manifest.xml)
+  configure_file(inkscape-manifest.xml ${CMAKE_BINARY_DIR}/src/${FILE_NAME}-manifest.xml)
   list(APPEND view_SRC ${CMAKE_BINARY_DIR}/src/inkview.rc)
 endif()
 
 # make executables for inkscape and inkview
 add_executable(inkscape ${main_SRC})
 add_executable(inkview ${view_SRC})
+# Raaj Draw: the programs are raajdraw(.exe) and raajdraw-view(.exe); target names stay as upstream.
+set_target_properties(inkscape PROPERTIES OUTPUT_NAME "raajdraw")
+set_target_properties(inkview PROPERTIES OUTPUT_NAME "raajdraw-view")
 if(WIN32)
   # Make the same executables again, but this time as console application (GUI applications can't print to the console)
   add_executable(inkscape_com ${main_SRC})
   set_target_properties(inkscape_com
                         PROPERTIES
                           LINK_FLAGS "-mconsole"
-                          OUTPUT_NAME "inkscape.com"
+                          OUTPUT_NAME "raajdraw.com"
                           SUFFIX "")
   add_executable(inkview_com ${view_SRC})
   set_target_properties(inkview_com
                         PROPERTIES
                           LINK_FLAGS "-mconsole"
-                          OUTPUT_NAME "inkview.com"
+                          OUTPUT_NAME "raajdraw-view.com"
                           SUFFIX "")
 endif()
 
@@ -428,6 +439,14 @@ target_link_libraries(inkscape_base
         ${INKSCAPE_LIBS}
   )
 target_include_directories(inkscape_base INTERFACE ${2Geom_INCLUDE_DIRS})
+
+# Raaj Draw: HTTPS for the account check (WinHTTP ships with Windows; libcurl elsewhere)
+if(WIN32)
+    target_link_libraries(inkscape_base PRIVATE winhttp)
+else()
+    find_package(CURL REQUIRED)
+    target_link_libraries(inkscape_base PRIVATE CURL::libcurl)
+endif()
 
 # Link inkscape and inkview against inkscape_base
 target_link_libraries(inkscape inkscape_base)
