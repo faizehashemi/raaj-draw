@@ -38,9 +38,11 @@ def edit(path, pairs):
     changed = False
     for old, new, *count in pairs:
         expected = count[0] if count else 1
-        n = text.count(old)
-        if n == 0 and new in text:
+        if new and new in text and (old not in new or text.count(new) >= expected):
             continue  # already applied
+        if not new and old not in text:
+            continue  # a deletion that is already applied
+        n = text.count(old)
         if n != expected:
             problems.append(f"{path}: expected {expected}× {old[:70]!r}, found {n}")
             continue
@@ -109,6 +111,15 @@ def file_edits():
     ])
     edit("src/inkscape.cpp", [
         ('please file a bug at https://inkscape.org/report', f'please report it at {CONTACT}'),
+    ])
+
+    # Window titles: document windows and the Welcome screen.
+    edit("src/ui/widget/desktop-widget.cpp", [
+        ('        Name += " - Inkscape";', f'        Name += " - {NAME}";'),
+    ])
+    edit("src/ui/dialog/startup.cpp", [
+        ("    set_title(Inkscape::inkscape_version());",
+         f'    set_title(std::string("{NAME} ") + Inkscape::version_string_without_revision);'),
     ])
 
     # About dialog: version button and footer link.
@@ -185,6 +196,9 @@ def file_edits():
         ('DESCRIPTION "Inkscape themes (look and feel including icons)"', 'DESCRIPTION "Themes (look and feel including icons)"'),
         ('DESCRIPTION "Example files created in Inkscape"', 'DESCRIPTION "Example drawings"'),
         ('DESCRIPTION "Tutorials teaching Inkscape usage"', 'DESCRIPTION "Tutorials"'),
+    ])
+    edit("CMakeScripts/ConfigPaths.cmake", [
+        ('    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/inkscape"', '    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/raajdraw"'),
     ])
     edit("CMakeScripts/Dist.cmake", [
         ('set(INKSCAPE_DIST_PREFIX "${PROJECT_NAME}-${INKSCAPE_VERSION}")', 'set(INKSCAPE_DIST_PREFIX "raajdraw-${INKSCAPE_VERSION}")'),

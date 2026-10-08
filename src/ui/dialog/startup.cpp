@@ -162,7 +162,7 @@ StartScreen::StartScreen()
     , messages       (get_widget<Gtk::Label>   (build_splash, "messages"))
 {
     set_name("start-screen-window");
-    set_title(Inkscape::inkscape_version());
+    set_title(std::string("Raaj Draw ") + Inkscape::version_string_without_revision);
     set_can_focus(true);
     set_can_default(true);
     set_urgency_hint(true);  // Draw user's attention to this window!

@@ -325,7 +325,7 @@ SPDesktopWidget::updateTitle(gchar const* uri)
             Name += ")";
         }
 
-        Name += " - Inkscape";
+        Name += " - Raaj Draw";
 
         // Name += " (";
         // Name += Inkscape::version_string;
