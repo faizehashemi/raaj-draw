@@ -44,6 +44,7 @@
 #include "helper/auto-connection.h"
 #include "hsluv.h"
 #include "inkscape-version-info.h"
+#include "inkscape-version.h" // Raaj Draw
 #include "inkscape.h"
 #include "inkscape-window.h"
 #include "io/resource.h"

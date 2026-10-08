@@ -113,6 +113,7 @@ def file_edits():
 
     # About dialog: version button and footer link.
     edit("src/ui/dialog/about.cpp", [
+        ('#include "inkscape-version-info.h"\n', '#include "inkscape-version-info.h"\n#include "inkscape-version.h" // Raaj Draw\n'),
         ('    auto text = Inkscape::inkscape_version();',
          f'    auto text = std::string("{NAME} ") + Inkscape::version_string + " (based on Inkscape)";'),
     ])

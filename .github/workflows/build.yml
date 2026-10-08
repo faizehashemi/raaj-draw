@@ -67,7 +67,7 @@ jobs:
         shell: pwsh
         run: |
           & "C:/ink$env:IDW_VERSION/msys2_shell.cmd" -defterm -no-start -ucrt64 -use-full-path -here -c `
-            "set -o pipefail; ninja -C build dist-win-exe dist-win-7z 2>&1 | tee build.log"
+            "set -o pipefail; ninja -k 0 -C build dist-win-exe dist-win-7z 2>&1 | tee build.log"
           if ($LASTEXITCODE -ne 0) { python raaj/ci-report.py build.log; exit 1 }
           Get-ChildItem build -Filter "raajdraw*" | Format-Table Name, Length
 
@@ -96,6 +96,7 @@ jobs:
     env:
       CCACHE_DIR: ${{ github.workspace }}/ccache
       CCACHE_MAXSIZE: 1G
+      MAKEFLAGS: "-k"   # report every compile error in one run
     defaults:
       run:
         shell: bash
