@@ -1,13 +1,18 @@
 # Raaj Draw: build the Windows installer and the Linux AppImage.
-# Runs when a version tag (v1.4.4-raaj1, …) is pushed, or by hand from the Actions tab.
+# Runs on every push to main (builds only), on version tags (v1.4.4-raaj1, …) and by hand from the Actions tab.
 # A tag build also publishes a GitHub Release, which draw.raajsoftware.com/download/* links to.
 
 name: Build Raaj Draw
 
 on:
   push:
+    branches: [main]
     tags: ["v*"]
   workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
