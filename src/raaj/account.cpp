@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
+#include <gtkmm/button.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/image.h>
 #include <gtkmm/label.h>
